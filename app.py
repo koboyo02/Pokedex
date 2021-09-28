@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, render_template
 from werkzeug.exceptions import abort
+import requests
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -20,10 +21,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM pokedex').fetchall()
-    conn.close()
-    return render_template('index.html', posts=posts)
+    # conn = get_db_connection()
+    # posts = conn.execute('SELECT * FROM pokedex').fetchall()
+    # conn.close()
+    request = requests.get('https://pokeapi.co/api/v2/pokemon?limit=151/')
+    response = request.json()
+    trad = response['results']
+    return render_template('index.html', posts=trad)
 
 @app.route('/<int:post_id>')
 def post(post_id):
